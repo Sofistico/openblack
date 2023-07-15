@@ -26,7 +26,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-#include "3D/Camera.h"
+#include "3D/CameraInterface.h"
 #include "3D/CreatureBody.h"
 #include "3D/LandIslandInterface.h"
 #include "3D/Sky.h"
@@ -130,7 +130,7 @@ Game::Game(Arguments&& args)
 		// If gui captures this input, do not propagate
 		if (!this->_gui->ProcessEvents(event))
 		{
-			this->_camera->ProcessSDLEvent(event);
+			Locator::windowing::value().ProcessSDLEvent(event);
 			this->_config.running = this->ProcessEvents(event);
 		}
 	}));
@@ -204,7 +204,8 @@ bool Game::ProcessEvents(const SDL_Event& event)
 			_renderer->ConfigureView(graphics::RenderPass::Main, width, height);
 
 			auto aspect = _window->GetAspectRatio();
-			_camera->SetProjectionMatrixPerspective(_config.cameraXFov, aspect, _config.cameraNearClip, _config.cameraFarClip);
+			Locator::windowing::value().SetProjectionMatrixPerspective(_config.cameraXFov, aspect, _config.cameraNearClip,
+			                                                           _config.cameraFarClip);
 		}
 		break;
 	case SDL_KEYDOWN:
@@ -350,7 +351,7 @@ bool Game::Update()
 		}
 	}
 
-	_camera->Update(deltaTime);
+	Locator::windowing::value().Update(deltaTime);
 	Locator::cameraBookmarkSystem::value().Update(deltaTime);
 
 	// Update Game Logic in Registry
@@ -380,7 +381,7 @@ bool Game::Update()
 			{
 				glm::vec3 rayOrigin;
 				glm::vec3 rayDirection;
-				_camera->DeprojectScreenToWorld(_mousePosition, screenSize, rayOrigin, rayDirection);
+				Locator::windowing::value().DeprojectScreenToWorld(_mousePosition, screenSize, rayOrigin, rayDirection);
 				auto& dynamicsSystem = Locator::dynamicsSystem::value();
 
 				if (!glm::any(glm::isnan(rayOrigin) || glm::isnan(rayDirection)))
@@ -418,7 +419,7 @@ bool Game::Update()
 			auto& handTransform = Locator::entitiesRegistry::value().Get<ecs::components::Transform>(_handEntity);
 			// TODO(#480): move using velocity rather than snapping hand to intersectionTransform
 			handTransform.position = intersectionTransform.position;
-			auto cameraRotation = _camera->GetRotation();
+			auto cameraRotation = Locator::windowing::value().GetRotation();
 			handTransform.rotation = glm::eulerAngleY(-cameraRotation.y) * modelRotationCorrection;
 			handTransform.rotation = intersectionTransform.rotation * handTransform.rotation;
 			handTransform.position += intersectionTransform.rotation * handOffset;
@@ -626,12 +627,13 @@ bool Game::Initialize()
 	_profiler = std::make_unique<Profiler>();
 
 	// create our camera
-	_camera = std::make_unique<Camera>();
+	openblack::ecs::systems::InitializeCamera();
 	auto aspect = _window ? _window->GetAspectRatio() : 1.0f;
-	_camera->SetProjectionMatrixPerspective(_config.cameraXFov, aspect, _config.cameraNearClip, _config.cameraFarClip);
+	Locator::windowing::value().SetProjectionMatrixPerspective(_config.cameraXFov, aspect, _config.cameraNearClip,
+	                                                           _config.cameraFarClip);
 
-	_camera->SetPosition(glm::vec3(1441.56f, 24.764f, 2081.76f));
-	_camera->SetRotation(glm::radians(glm::vec3(0.0f, -45.0f, 0.0f)));
+	Locator::windowing::value().SetPosition(glm::vec3(1441.56f, 24.764f, 2081.76f));
+	Locator::windowing::value().SetRotation(glm::radians(glm::vec3(0.0f, -45.0f, 0.0f)));
 
 	if (!LoadVariables())
 	{
@@ -722,7 +724,6 @@ bool Game::Run()
 
 			Renderer::DrawSceneDesc drawDesc {
 			    /*profiler =*/*_profiler,
-			    /*camera =*/_camera.get(),
 			    /*frameBuffer =*/nullptr,
 			    /*sky =*/*_sky,
 			    /*water =*/*_water,

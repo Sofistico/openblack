@@ -58,7 +58,6 @@ public:
 	struct DrawSceneDesc
 	{
 		Profiler& profiler;
-		const Camera* camera;
 		const graphics::FrameBuffer* frameBuffer;
 		const Sky& sky;
 		const Water& water;

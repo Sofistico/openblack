@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 
+#include "3D/CameraInterface.h"
 #include "RenderPass.h"
 #include "ShaderProgram.h"
 
@@ -32,7 +33,7 @@ public:
 	void LoadShaders();
 	[[nodiscard]] const ShaderProgram* GetShader(const std::string& name) const;
 
-	void SetCamera(RenderPass viewId, const Camera& camera);
+	void SetCamera(RenderPass viewId, const CameraInterface& camera);
 
 private:
 	using ShaderMap = std::map<std::string, const ShaderProgram*>;

@@ -17,6 +17,7 @@ namespace openblack
 {
 class RandomNumberManagerInterface;
 class LandIslandInterface;
+class CameraInterface;
 
 namespace filesystem
 {
@@ -45,6 +46,7 @@ class PathfindingSystemInterface;
 
 void InitializeGame();
 void InitializeLevel(const std::filesystem::path& path);
+void InitializeCamera();
 } // namespace ecs::systems
 
 struct Locator
@@ -53,6 +55,7 @@ struct Locator
 	using resources = entt::locator<resources::ResourcesInterface>;
 	using rng = entt::locator<RandomNumberManagerInterface>;
 	using terrainSystem = entt::locator<LandIslandInterface>;
+	using windowing = entt::locator<CameraInterface>;
 	using rendereringSystem = entt::locator<ecs::systems::RenderingSystemInterface>;
 	using dynamicsSystem = entt::locator<ecs::systems::DynamicsSystemInterface>;
 	using cameraBookmarkSystem = entt::locator<ecs::systems::CameraBookmarkSystemInterface>;

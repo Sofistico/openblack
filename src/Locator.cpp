@@ -12,6 +12,7 @@
 #define LOCATOR_IMPLEMENTATIONS
 
 #include "3D/LandIsland.h"
+#include "3D/Camera.h"
 #include "3D/UnloadedIsland.h"
 #include "Common/RandomNumberManagerProduction.h"
 #include "ECS/MapProduction.h"
@@ -65,5 +66,9 @@ void InitializeLevel(const std::filesystem::path& path)
 	Locator::pathfindingSystem::emplace<PathfindingSystem>();
 	Locator::cameraBookmarkSystem::emplace<CameraBookmarkSystem>();
 	Locator::terrainSystem::emplace<LandIsland>(path);
+}
+
+void InitializeCamera() {
+	Locator::windowing::emplace<Camera>();
 }
 } // namespace openblack::ecs::systems

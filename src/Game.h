@@ -35,7 +35,6 @@ union SDL_Event;
 
 namespace openblack
 {
-class Camera;
 class GameWindow;
 class EventManager;
 class Profiler;
@@ -132,6 +131,7 @@ public:
 		float bumpMapStrength {1.0f};
 		float smallBumpMapStrength {1.0f};
 
+		// TODO: Sofistico
 		float cameraXFov {70.0f};
 		float cameraNearClip {1.0f};
 		float cameraFarClip {static_cast<float>(0x10000)};
@@ -163,10 +163,8 @@ public:
 
 	GameWindow* GetWindow() { return _window.get(); }
 	[[nodiscard]] const GameWindow& GetWindow() const { return *_window; }
-	Camera& GetCamera() { return *_camera; }
 	[[nodiscard]] Profiler& GetProfiler() const { return *_profiler; }
 	[[nodiscard]] Renderer& GetRenderer() const { return *_renderer; }
-	[[nodiscard]] Camera& GetCamera() const { return *_camera; }
 	[[nodiscard]] Sky& GetSky() const { return *_sky; }
 	[[nodiscard]] Water& GetWater() const { return *_water; }
 	[[nodiscard]] entt::entity GetHand() const;
@@ -193,7 +191,6 @@ private:
 	std::unique_ptr<GameWindow> _window;
 	std::unique_ptr<Renderer> _renderer;
 	std::unique_ptr<debug::gui::Gui> _gui;
-	std::unique_ptr<Camera> _camera;
 	std::unique_ptr<Profiler> _profiler;
 	std::unique_ptr<EventManager> _eventManager;
 

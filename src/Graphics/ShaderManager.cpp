@@ -155,7 +155,7 @@ const ShaderProgram* ShaderManager::GetShader(const std::string& name) const
 	return nullptr;
 }
 
-void ShaderManager::SetCamera(graphics::RenderPass viewId, const Camera& camera)
+void ShaderManager::SetCamera(graphics::RenderPass viewId, const CameraInterface& camera)
 {
 	auto view = camera.GetViewMatrix();
 	auto proj = camera.GetProjectionMatrix();

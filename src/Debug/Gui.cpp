@@ -785,7 +785,7 @@ void Gui::ShowVillagerNames(const Game& game)
 	const auto& displaySize = ImGui::GetIO().DisplaySize;
 
 	uint32_t i = 0;
-	const auto& camera = game.GetCamera();
+	const auto& camera = Locator::windowing::value();
 	const glm::vec4 viewport =
 	    glm::vec4(ImGui::GetStyle().WindowPadding.x, 0, displaySize.x - ImGui::GetStyle().WindowPadding.x, displaySize.y);
 	std::vector<glm::vec4> coveredAreas;
@@ -920,8 +920,8 @@ void Gui::ShowCameraPositionOverlay(const Game& game)
 
 	if (ImGui::Begin("Camera position overlay", nullptr, cameraPositionOverlayFlags))
 	{
-		const auto camPos = game.GetCamera().GetPosition();
-		const auto camRot = glm::degrees(game.GetCamera().GetRotation());
+		const auto camPos = Locator::windowing::value().GetPosition();
+		const auto camRot = glm::degrees(Locator::windowing::value().GetRotation());
 		ImGui::Text("Camera Position: (%.1f,%.1f, %.1f)", camPos.x, camPos.y, camPos.z);
 		ImGui::Text("Camera Rotation: (%.1f,%.1f, %.1f)", camRot.x, camRot.y, camRot.z);
 

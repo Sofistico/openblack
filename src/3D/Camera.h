@@ -9,24 +9,13 @@
 
 #pragma once
 
-#include <chrono>
-#include <memory>
-#include <optional>
-
-#include <SDL_events.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "ECS/Components/Transform.h"
-
-union SDL_Event;
+#include "CameraInterface.h"
 
 namespace openblack
 {
 
-class Camera
+class Camera: public CameraInterface
 {
-
 public:
 	Camera(glm::vec3, glm::vec3);
 	Camera()
@@ -36,45 +25,45 @@ public:
 
 	virtual ~Camera() = default;
 
-	[[nodiscard]] virtual glm::mat4 GetViewMatrix() const;
-	[[nodiscard]] const glm::mat4& GetProjectionMatrix() const { return _projectionMatrix; }
-	[[nodiscard]] virtual glm::mat4 GetViewProjectionMatrix() const;
+	[[nodiscard]] glm::mat4 GetViewMatrix() const override;
+	[[nodiscard]] const glm::mat4& GetProjectionMatrix() const override { return _projectionMatrix; }
+	[[nodiscard]] glm::mat4 GetViewProjectionMatrix() const override;
 
-	[[nodiscard]] std::optional<ecs::components::Transform> RaycastMouseToLand();
-	void FlyInit();
-	void StartFlight();
-	void ResetVelocities();
+	[[nodiscard]] std::optional<ecs::components::Transform> RaycastMouseToLand() override;
+	void FlyInit() override;
+	void StartFlight() override;
+	void ResetVelocities() override;
 
-	[[nodiscard]] glm::vec3 GetPosition() const { return _position; }
+	[[nodiscard]] glm::vec3 GetPosition() const override { return _position; }
 	/// Get rotation as euler angles in radians
-	[[nodiscard]] glm::vec3 GetRotation() const { return _rotation; }
-	[[nodiscard]] glm::vec3 GetVelocity() const { return _velocity; }
-	[[nodiscard]] float GetMaxSpeed() const { return _maxMovementSpeed; }
+	[[nodiscard]] glm::vec3 GetRotation() const override { return _rotation; }
+	[[nodiscard]] glm::vec3 GetVelocity() const override { return _velocity; }
+	[[nodiscard]] float GetMaxSpeed() const override { return _maxMovementSpeed; }
 
-	void SetPosition(const glm::vec3& position) { _position = position; }
+	void SetPosition(const glm::vec3& position) override { _position = position; }
 	/// Set rotation as euler angles in radians
-	void SetRotation(const glm::vec3& eulerRadians) { _rotation = eulerRadians; }
+	void SetRotation(const glm::vec3& eulerRadians) override { _rotation = eulerRadians; }
 
-	void SetProjectionMatrixPerspective(float xFov, float aspect, float nearClip, float farClip);
-	void SetProjectionMatrix(const glm::mat4x4& projection) { _projectionMatrix = projection; }
+	void SetProjectionMatrixPerspective(float xFov, float aspect, float nearClip, float farClip) override;
+	void SetProjectionMatrix(const glm::mat4x4& projection) override { _projectionMatrix = projection; }
 
-	[[nodiscard]] glm::vec3 GetForward() const;
-	[[nodiscard]] glm::vec3 GetRight() const;
-	[[nodiscard]] glm::vec3 GetUp() const;
+	[[nodiscard]] glm::vec3 GetForward() const override;
+	[[nodiscard]] glm::vec3 GetRight() const override;
+	[[nodiscard]] glm::vec3 GetUp() const override;
 
-	[[nodiscard]] std::unique_ptr<Camera> Reflect(const glm::vec4& relectionPlane) const;
+	[[nodiscard]] std::unique_ptr<CameraInterface> Reflect(const glm::vec4& relectionPlane) const override;
 
 	void DeprojectScreenToWorld(glm::ivec2 screenPosition, glm::ivec2 screenSize, glm::vec3& outWorldOrigin,
-	                            glm::vec3& outWorldDirection);
-	bool ProjectWorldToScreen(glm::vec3 worldPosition, glm::vec4 viewport, glm::vec3& outScreenPosition) const;
+	                            glm::vec3& outWorldDirection) override;
+	bool ProjectWorldToScreen(glm::vec3 worldPosition, glm::vec4 viewport, glm::vec3& outScreenPosition) const override;
 
-	void Update(std::chrono::microseconds dt);
-	void ProcessSDLEvent(const SDL_Event&);
+	void Update(std::chrono::microseconds dt) override;
+	void ProcessSDLEvent(const SDL_Event&) override;
 
-	void HandleKeyboardInput(const SDL_Event&);
-	void HandleMouseInput(const SDL_Event&);
+	void HandleKeyboardInput(const SDL_Event&) override;
+	void HandleMouseInput(const SDL_Event&) override;
 
-	[[nodiscard]] glm::mat4 GetRotationMatrix() const;
+	[[nodiscard]] glm::mat4 GetRotationMatrix() const override;
 
 protected:
 	glm::vec3 _position;
@@ -115,7 +104,7 @@ protected:
 	glm::vec3 _flyPrevPos;
 };
 
-class ReflectionCamera: public Camera
+class ReflectionCamera final: public Camera
 {
 public:
 	ReflectionCamera()

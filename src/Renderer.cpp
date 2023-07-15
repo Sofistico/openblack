@@ -449,10 +449,9 @@ void Renderer::DrawScene(const DrawSceneDesc& drawDesc) const
 			DrawSceneDesc drawPassDesc = drawDesc;
 
 			auto& frameBuffer = drawDesc.water.GetFrameBuffer();
-			auto reflectionCamera = drawDesc.camera->Reflect(drawDesc.water.GetReflectionPlane());
+			auto reflectionCamera = Locator::windowing::value().Reflect(drawDesc.water.GetReflectionPlane());
 
 			drawPassDesc.viewId = graphics::RenderPass::Reflection;
-			drawPassDesc.camera = reflectionCamera.get();
 			drawPassDesc.frameBuffer = &frameBuffer;
 			drawPassDesc.drawWater = false;
 			drawPassDesc.drawDebugCross = false;
@@ -482,7 +481,7 @@ void Renderer::DrawPass(const DrawSceneDesc& desc) const
 	// other draw calls are submitted to view
 	bgfx::touch(static_cast<bgfx::ViewId>(desc.viewId));
 
-	_shaderManager->SetCamera(desc.viewId, *desc.camera);
+	_shaderManager->SetCamera(desc.viewId, Locator::windowing::value());
 
 	const auto* skyShader = _shaderManager->GetShader("Sky");
 	const auto* waterShader = _shaderManager->GetShader("Water");
